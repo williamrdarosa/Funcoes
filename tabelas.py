@@ -1,7 +1,6 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from win32com import client
 import os
 import openpyxl
 from openpyxl import Workbook
@@ -12,24 +11,10 @@ from openpyxl.chart import (
     Reference,
 )
 from openpyxl.chart.label import DataLabelList
-import fitz
-
-dir_path = os.path.dirname(os.path.realpath('__file__'))
 
 def dados(x):
     r = requests.get(x)
     return r.json()
-
-def imprimir(n, nome):
-    excel = client.Dispatch("Excel.Application")
-    sheets = excel.Workbooks.Open(os.path.join(dir_path, f'{nome}.xlsx'))
-    work_sheets = sheets.Worksheets[n]
-    work_sheets.ExportAsFixedFormat(0, os.path.join(dir_path, f'{nome}.pdf'))
-    sheets.Close(True)
-    doc = fitz.open(os.path.join(dir_path, f'{nome}.pdf'))
-    page = doc.load_page(0)
-    pix = page.get_pixmap()
-    pix.save(os.path.join(dir_path, f'{nome}.png'))
 
 class Tabela():
     
