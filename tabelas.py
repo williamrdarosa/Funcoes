@@ -22,14 +22,14 @@ def dados(x):
 
 def imprimir(n, nome):
     excel = client.Dispatch("Excel.Application")
-    sheets = excel.Workbooks.Open(f'{dir_path}\\{nome}.xlsx')
+    sheets = excel.Workbooks.Open(os.path.join(dir_path, f'{nome}.xlsx'))
     work_sheets = sheets.Worksheets[n]
-    work_sheets.ExportAsFixedFormat(0, f'{dir_path}\\{nome}.pdf')
+    work_sheets.ExportAsFixedFormat(0, os.path.join(dir_path, f'{nome}.pdf'))
     sheets.Close(True)
-    doc = fitz.open(f'{dir_path}\\{nome}.pdf')
+    doc = fitz.open(os.path.join(dir_path, f'{nome}.pdf'))
     page = doc.load_page(0)
     pix = page.get_pixmap()
-    pix.save(f'{dir_path}\\{nome}.png')
+    pix.save(os.path.join(dir_path, f'{nome}.png'))
 
 class Tabela():
     
