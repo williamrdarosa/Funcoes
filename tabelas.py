@@ -72,63 +72,60 @@ class Tabela():
 
 class Excel():
     
-    def __init__(self, nome):
+    def __init__(self, nome, pasta = Workbook()):
         self._nome = nome
+        self._pasta = pasta
         
-    def pasta(self):
-        wb = Workbook()
-        return wb
-        
-    def planilha(self, wb, nome, index=None):
-        return wb.create_sheet(nome, index)
+    def planilha(self, nome, index=None):
+        return self._pasta.create_sheet(nome, index)
     
-    def excluir_planilha(self, wb, nome):
-        std = wb.get_sheet_by_name(nome)
-        wb.remove_sheet(std)
+    def excluir_planilha(self, nome = 'Sheet'):
+        std = self._pasta.get_sheet_by_name(nome)
+        self._pasta.remove_sheet(std)
     
-    def tabela(self, df, ws):
+    def tabela(self, df, planilha):
         # Inserir tabela
         for r in dataframe_to_rows(df, index=True, header=True):
-            ws.append(r)
+            planilha.append(r)
         # Formatar tabela
-        for cell in ws['A'] + ws[1]:
+        for cell in planilha['A'] + planilha[1]:
             cell.style = 'Pandas'
         # Remover celulas em branco
-        def remove(ws, row): 
+        def remove(planilha, row): 
             for cell in row: 
                 if cell.value != None: 
                     return
-            ws.delete_rows(row[0].row, 1) 
-        for row in ws: 
-            remove(ws,row)
-        ws.delete_cols(1)
+            planilha.delete_rows(row[0].row, 1) 
+        for row in planilha: 
+            remove(planilha,row)
+        planilha.delete_cols(1)
         
-    def alinhar(self, ws, n=2):
+    def alinhar(self, planilha, n=2):
         dims = {}
-        for row in ws.rows:
+        for row in planilha.rows:
             for cell in row:
                 if cell.value:
                     dims[cell.column_letter] = max((dims.get(cell.column_letter, 0), len(str(cell.value))))   
         for col, value in dims.items():
-            ws.column_dimensions[col].width = (value + 2)
+            planilha.column_dimensions[col].width = (value + 2)
     
-    def form_data(self, ws, lista):
+    def form_data(self, planilha, lista):
         for s in lista:
-            for cell in ws[s]:
+            for cell in planilha[s]:
                 cell.number_format = "DD/MM/YYYY hh:mm:ss"
                 
-    def form_porcentagem(self, ws, lista):
+    def form_porcentagem(self, planilha, lista):
         for s in lista:
-            for cell in ws[s]:
+            for cell in planilha[s]:
                 cell.number_format = "0.00%"
     
-    def form_centralizar(self, ws, lista):
+    def form_centralizar(self, planilha, lista):
         for s in lista:
-            for cell in ws[s]:
+            for cell in planilha[s]:
                 cell.alignment = Alignment(horizontal='center')
                 
-    def salvar(self, wb):
-        wb.save(f"{self._nome}.xlsx")
+    def salvar(self):
+        self._pasta.save(f"{self._nome}.xlsx")
         
     def ocultar_planilha(self, planilha):
         planilha.sheet_state = 'hidden'
